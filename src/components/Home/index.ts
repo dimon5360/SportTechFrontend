@@ -11,4 +11,4 @@ export const authenticate = async () => {
     return isAuthenticated()
 }
 
-export default Home;
+export { Home };

@@ -3,15 +3,16 @@ import React from "react";
 import Header from '../Header/Header';
 import Button from '../Button/Button';
 
-// import { isAuthenticated } from '.'
+import { isAuthenticated } from '.'
 
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 class Home extends React.Component {
 
   // componentDidMount() {
   //   if (isAuthenticated()) {
-  //     window.location = "/profile/"
+  //     window.location.href = "/profile/" + Cookies.get("user_id")
   //   }
   // }
 

@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import bcrypt from "bcryptjs-react";
 
 import { Link } from 'react-router-dom';
+import axios from "axios";
 
 class Login extends React.Component {
   constructor(props) {
@@ -31,7 +32,7 @@ class Login extends React.Component {
   }
 
   async login() {
-    
+
     if (!this.inputValidating()) {
       alert("You should enter email and password")
       return
@@ -41,26 +42,27 @@ class Login extends React.Component {
     let salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
     const hash = bcrypt.hashSync(pass, salt);
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: this.state.email, password: hash })
-    };
+    axios.post('api/v1/login', {
+      email: this.state.email,
+      password: hash
+    })
+      .then(function (response) {
 
-    const response = await fetch('/api/v1/login', requestOptions);
-    if (!response.ok) {
-      alert("HTTP status " + response.status);
-      return response.status;
-    }    
+        let data = response.data;
 
-    let data = await response.json();
+        Cookies.set('access_token', data['access_token'])
+        Cookies.set('refresh_token', data['refresh_token'])
+        Cookies.set('user_id', data['user_id'])
 
-    Cookies.set('access_token', data['access_token'])
-    Cookies.set('refresh_token', data['refresh_token'])
-    Cookies.set('user_id', data['user_id'])
-    
-    window.location.reload(false);
-    return data;
+        window.location.href = '/profile/' + Cookies.get("user_id")
+      })
+      .catch(function (error) {
+
+        console.log(error);
+      })
+      .finally(function () {
+        // always executed
+      });
   }
 
   render() {
@@ -68,23 +70,20 @@ class Login extends React.Component {
       <div className="container">
         <Header />
         <div className="col-lg-12">
-          <form onSubmit={this.login}>
-            <div>
-              <label htmlFor="Email">Email:</label>
-            </div>
-            <input type="text" value={this.state.email} onChange={this.handleEmail} />
+          <div>
+            <label htmlFor="Email">Email:</label>
+          </div>
+          <input type="text" value={this.state.email} onChange={this.handleEmail} />
 
-            <div>
-              <label htmlFor="Password">Password:</label>
-            </div>
-            <input type="password" value={this.state.password} onChange={this.handlePassword} />
+          <div>
+            <label htmlFor="Password">Password:</label>
+          </div>
+          <input type="password" value={this.state.password} onChange={this.handlePassword} />
 
-            <div>
-              <Link to="/profile">
-                <Button onClick={this.login}>Sign In</Button>
-              </Link>
-            </div>
-          </form>
+          <div>
+            <Button onClick={this.login}>Sign In</Button>
+          </div>
+
           <div>
             <Link to="/">
               <Button>Main</Button>
