@@ -8,7 +8,14 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     proxy: {
-        '/api': 'http://localhost:40401',
+      '/api': {
+          target: 'https://localhost:40401',
+          secure: false,
+        },
     },
+    https: {
+      key: '/home/dmitry/Projects/SportTechService/SportTechCredentials/private.key',
+      cert: '/home/dmitry/Projects/SportTechService/SportTechCredentials/server.crt',
+    }
 },
 })
