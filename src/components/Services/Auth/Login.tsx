@@ -1,50 +1,55 @@
 
 import React from "react";
-import Header from '../Header/Header';
-import Button from '../Button/Button';
+import Header from '../../Common/Header/Header';
+import Button from '../../Common/Button/Button';
 
+import { creadentialValidating } from "./Validating";
 import Cookies from 'js-cookie';
 import bcrypt from "bcryptjs-react";
 
 import { Link } from 'react-router-dom';
 import axios from "axios";
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { email: '', password: '' };
+interface Props {
+  
+}
 
+type State = { email: string, password: string };
+
+class Login extends React.Component<Props, State> {
+  constructor(props: Props, state: State) {
+    super(props);
+
+    this.state = state;
     this.login = this.login.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
   }
 
-  handleEmail(event) {
-    this.setState({ email: event.target.value });
+  handleEmail(event : React.FormEvent<HTMLInputElement>) {
+    this.setState({ email: event.currentTarget.value });
   }
 
-  handlePassword(event) {
-    this.setState({ password: event.target.value });
-  }
+  handlePassword(event: React.FormEvent<HTMLInputElement>) {
 
-  inputValidating() {
-    return this.state.email.length !== 0 && this.state.password.length !== 0
+    this.setState({ password: event.currentTarget.value  });
   }
 
   async login() {
 
-    if (!this.inputValidating()) {
-      alert("You should enter email and password")
+    const pass = this.state.password;
+    const email = this.state.email;
+
+    if (!creadentialValidating(email, pass)) {
+      alert("Invalid email or password")
       return
     }
 
-    let pass = this.state.password;
     let salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
-    const hash = bcrypt.hashSync(pass, salt);
 
-    axios.post('api/v1/login', {
+    axios.post('api/v1/user/login', {
       email: this.state.email,
-      password: hash
+      password: bcrypt.hashSync(this.state.password, salt)
     })
       .then(function (response) {
 
@@ -54,7 +59,7 @@ class Login extends React.Component {
         Cookies.set('refresh_token', data['refresh_token'])
         Cookies.set('user_id', data['user_id'])
 
-        window.location.href = '/profile/' + Cookies.get("user_id")
+        window.location.href = '/profile/get/' + Cookies.get("user_id")
       })
       .catch(function (error) {
 
@@ -81,7 +86,7 @@ class Login extends React.Component {
           <input type="password" value={this.state.password} onChange={this.handlePassword} />
 
           <div>
-            <Button onClick={this.login}>Sign In</Button>
+            <Button onClick={this.login}>Log In</Button>
           </div>
 
           <div>

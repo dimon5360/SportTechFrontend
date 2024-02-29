@@ -1,16 +1,22 @@
 
 import React from "react";
-import Header from '../Header/Header';
-import Button from '../Button/Button';
+import Header from '../../Common/Header/Header';
+import Button from '../../Common/Button/Button';
 
 import { Link } from 'react-router-dom';
 import { unauthenticate, isAuthenticated } from '.'
 import Cookies from "js-cookie";
 
-class DetailProfile extends React.Component {
-    constructor() {
-        super();
-        this.state = { username: '', firstname: '', lastname: '' };
+interface Props {
+  
+}
+type State = { username: string, firstname: string, lastname: string };
+
+class DetailProfile extends React.Component<Props, State> {
+    constructor(props: Props, state: State) {
+        super(props);
+
+        this.state = state;
 
         this.fetchProfile = this.fetchProfile.bind(this);
 
@@ -27,23 +33,23 @@ class DetailProfile extends React.Component {
         unauthenticate()
     }
 
-    handleUsername(event) {
-        this.setState({ username: event.target.value });
+    handleUsername(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({ username: event.currentTarget.value });
     }
 
-    handleFirstname(event) {
-        this.setState({ firstname: event.target.value });
+    handleFirstname(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({ firstname: event.currentTarget.value });
     }
 
-    handleLastname(event) {
-        this.setState({ lastname: event.target.value });
+    handleLastname(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({ lastname: event.currentTarget.value });
     }
 
     async fetchProfile() {
         try {
-            const response = await fetch('/api/v1/profile/' + Cookies.get("user_id"));
+            const response = await fetch('/api/v1/profile/get/' + Cookies.get("user_id"));
             if (response.redirected) {
-                window.location = response.url;
+                window.location.href = response.url;
             }
 
             let data = await response.json();

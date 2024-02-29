@@ -1,19 +1,25 @@
 
 import React from "react";
-import Header from '../Header/Header';
-import Button from '../Button/Button';
+import Header from '../../Common/Header/Header';
+import Button from '../../Common/Button/Button';
 
 import { Link } from 'react-router-dom';
-import { unauthenticate, isAuthenticated } from '.'
+import { unauthenticate } from '.'
 import Cookies from "js-cookie";
 import axios from "axios";
 
 const PREFIX = "/api/v1/"
 
-class CreateProfile extends React.Component {
-  constructor() {
-    super();
-    this.state = { username: '', firstname: '', lastname: '', isProfileExist: false };
+interface Props {
+  
+}
+type State = { username: string, firstname: string, lastname: string };
+
+class CreateProfile extends React.Component<Props, State> {
+  constructor(props: Props, state: State) {
+      super(props);
+
+      this.state = state;
 
     this.addProfile = this.addProfile.bind(this);
 
@@ -26,31 +32,31 @@ class CreateProfile extends React.Component {
     unauthenticate()
   }
 
-  handleUsername(event) {
-    this.setState({ username: event.target.value });
+  handleUsername(event: React.FormEvent<HTMLInputElement>) {
+    this.setState({ username: event.currentTarget.value });
   }
 
-  handleFirstname(event) {
-    this.setState({ firstname: event.target.value });
+  handleFirstname(event: React.FormEvent<HTMLInputElement>) {
+    this.setState({ firstname: event.currentTarget.value });
   }
 
-  handleLastname(event) {
-    this.setState({ lastname: event.target.value });
+  handleLastname(event: React.FormEvent<HTMLInputElement>) {
+    this.setState({ lastname: event.currentTarget.value });
   }
 
   async addProfile() {
 
-    const uuid = Cookies.get("user_id")
+    const uuid =  Cookies.get("user_id")
 
-    axios.post(PREFIX + 'create-profile', {
+    axios.post(PREFIX + 'profile/create', {
       username: this.state.username,
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-      user_id: uuid
+      user_id: uuid 
     })
       .then(function (response) {
-
-        window.location.href = 'profile/' + uuid;
+        console.log(response.data.url)
+        window.location.href = '/profile/get/' + uuid;
       })
       .catch(function (error) {
 

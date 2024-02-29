@@ -1,7 +1,7 @@
 
 import React from "react";
-import Header from '../Common/Header/Header';
-import Button from '../Common/Button/Button';
+import Header from '../Header/Header';
+import Button from '../Button/Button';
 
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';

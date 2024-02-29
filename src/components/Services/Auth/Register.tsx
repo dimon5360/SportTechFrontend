@@ -1,49 +1,53 @@
 
 import React from "react";
-import Header from '../Header/Header';
-import Button from '../Button/Button';
+import Header from '../../Common/Header/Header';
+import Button from '../../Common/Button/Button';
 
+import { creadentialValidating } from "./Validating";
 import { Link } from 'react-router-dom';
 import bcrypt from "bcryptjs-react";
 import axios from "axios";
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { email: '', password: '' };
+interface Props {
+  
+}
 
+type State = { email: string, password: string };
+
+class Register extends React.Component<Props, State> {
+  constructor(props: Props, state: State) {
+    super(props);
+    
+    this.state = state;
+
+    this.signup = this.signup.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
-
-    this.register = this.register.bind(this);
   }
 
-  handleEmail(event) {
-    this.setState({ email: event.target.value });
+  handleEmail(event: React.FormEvent<HTMLInputElement>) {
+    this.setState({ email: event.currentTarget.value  });
   }
 
-  handlePassword(event) {
-    this.setState({ password: event.target.value });
+  handlePassword(event: React.FormEvent<HTMLInputElement>) {
+    this.setState({ password: event.currentTarget.value  });
   }
 
-  inputValidating() {
-    return this.state.email.length !== 0 && this.state.password.length !== 0
-  }
+  async signup() {
 
-  async register() {
+    const pass = this.state.password;
+    const email = this.state.email;
 
-    if (!this.inputValidating()) {
-      alert("You should enter email, username and password")
+    if (!creadentialValidating(email, pass)) {
+      alert("Invalid email or password")
       return
     }
 
-    let pass = this.state.password;
-    let salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
-    const hash = bcrypt.hashSync(pass, salt);
+    const salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
 
-    axios.post('api/v1/register', {
+    axios.post('/api/v1/user/signup', {
       email: this.state.email,
-      password: hash
+      password: bcrypt.hashSync(this.state.password, salt)
     })
       .then(function (response) {
 
@@ -65,6 +69,7 @@ class Register extends React.Component {
       <div className="container">
         <Header />
         <div className="col-lg-12">
+        <form action="signup" onSubmit={this.signup}>
           <div>
             <div>
               <label htmlFor="Email">Email:</label>
@@ -78,10 +83,11 @@ class Register extends React.Component {
             </div>
             <input type="password" value={this.state.password} onChange={this.handlePassword} />
           </div>
+          </form>
 
           <div>
             <Link to="/">
-              <Button onClick={this.register}>Sign Up</Button>
+              <Button onClick={this.signup}>Sign Up</Button>
             </Link>
           </div>
           <div>

@@ -3,12 +3,12 @@ import "./App.css";
 
 import { Routes, Route } from 'react-router-dom';
 
-import Home from './components/Home/Home';
-import About from './components/About/About';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
-import DetailProfile from './components/Profile/DetailProfile';
-import CreateProfile from "./components/Profile/CreateProfile";
+import Home from './components/Common/Home/Home';
+import About from './components/Common/About/About';
+import Login from './components/Services/Auth/Login';
+import Register from './components/Services/Auth/Register';
+import DetailProfile from './components/Services/Profile/DetailProfile';
+import CreateProfile from "./components/Services/Profile/CreateProfile";
 
 function App() {
   return (
@@ -17,9 +17,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="create-profile" element={<CreateProfile />} />
-        <Route path="profile/:uuid" element={<DetailProfile />} />
+        <Route path="signup" element={<Register />} />
+        <Route path="profile/create" element={<CreateProfile />} />
+        <Route path="profile/get/:uuid" element={<DetailProfile />} />
       </Routes>
     </div>
   );
