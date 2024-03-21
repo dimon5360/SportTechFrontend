@@ -17,15 +17,19 @@ type State = { username: string, firstname: string, lastname: string };
 
 class CreateProfile extends React.Component<Props, State> {
   constructor(props: Props, state: State) {
-      super(props);
+    super(props);
 
-      this.state = state;
+    this.state = state;
 
     this.addProfile = this.addProfile.bind(this);
 
     this.handleUsername = this.handleUsername.bind(this);
     this.handleFirstname = this.handleFirstname.bind(this);
     this.handleLastname = this.handleLastname.bind(this);
+  }
+
+  componentDidMount() {
+    console.log("mount create profile component")
   }
 
   logout() {
@@ -46,29 +50,42 @@ class CreateProfile extends React.Component<Props, State> {
 
   async addProfile() {
 
-    const uuid =  Cookies.get("user_id")
+    const user_id =  Cookies.get("user_id")
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': Cookies.get("access-token")
+    }
 
-    axios.post(PREFIX + 'profile/create', {
+    await axios.post(PREFIX + 'create-profile/' + user_id, {
       username: this.state.username,
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-      user_id: uuid 
+      user_id: user_id
+    }, {
+      headers: headers,
     })
-      .then(function (response) {
-        console.log(response.data.url)
-        window.location.href = '/profile/get/' + uuid;
-      })
-      .catch(function (error) {
+    .then(function (response) {
 
-        console.log(error);
-        window.location.href = '/';
-      })
-      .finally(function () {
-        // always executed
-      });
+      if (response.request.redirected) {
+        console.log("redirected")
+      }
+
+      console.log("create profile response")
+      console.log(response.data.url)
+    })
+    .catch(function (error) {
+
+      console.log(error);
+      // window.location.href = '/';
+      return Promise.reject(error);
+    })
+    .finally(function () {
+      // always executed
+    });
+    window.location.reload()
   }
 
-  renderCreateProfile() {
+  render() {
     return (
       <div className="container">
         <Header />
@@ -104,9 +121,6 @@ class CreateProfile extends React.Component<Props, State> {
         </div>
       </div>
     )
-  }
-  render() {
-    return this.renderCreateProfile()
   }
 }
 export default CreateProfile

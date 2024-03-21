@@ -2,15 +2,15 @@
 
 function passwordValidating(password: string) {
 
-    const minNumberofChars = 6;
-    const maxNumberofChars = 16;
+    const minNumberOfChars = 6;
+    const maxNumberOfChars = 16;
     const regularExpression  = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/;
 
-    if (password.length < minNumberofChars || password.length > maxNumberofChars){
+    if (password.length < minNumberOfChars || password.length > maxNumberOfChars){
         return false;
     }
     if (!regularExpression.test(password)) {
-        alert("password should contain atleast one number and one special character");
+        alert("password should contain at least one number and one special character");
         return false;
     }
     return true
@@ -31,7 +31,7 @@ function emailValidating(email: string) {
 }
 
 
-export function creadentialValidating(email: string, password: string) {
+export function credentialValidating(email: string, password: string) {
 
     if (!passwordValidating(password)) {
       alert("Password validating failed")

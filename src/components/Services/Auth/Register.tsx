@@ -3,7 +3,7 @@ import React from "react";
 import Header from '../../Common/Header/Header';
 import Button from '../../Common/Button/Button';
 
-import { creadentialValidating } from "./Validating";
+import { credentialValidating } from "./Validating";
 import { Link } from 'react-router-dom';
 import bcrypt from "bcryptjs-react";
 import axios from "axios";
@@ -11,6 +11,8 @@ import axios from "axios";
 interface Props {
   
 }
+
+const PREFIX = "/api/v1/"
 
 type State = { email: string, password: string };
 
@@ -20,7 +22,7 @@ class Register extends React.Component<Props, State> {
     
     this.state = state;
 
-    this.signup = this.signup.bind(this);
+    this.register = this.register.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
   }
@@ -33,25 +35,25 @@ class Register extends React.Component<Props, State> {
     this.setState({ password: event.currentTarget.value  });
   }
 
-  async signup() {
+  async register() {
 
     const pass = this.state.password;
     const email = this.state.email;
 
-    if (!creadentialValidating(email, pass)) {
+    if (!credentialValidating(email, pass)) {
       alert("Invalid email or password")
       return
     }
 
     const salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
 
-    axios.post('/api/v1/user/signup', {
+    axios.post(PREFIX + 'register', {
       email: this.state.email,
       password: bcrypt.hashSync(this.state.password, salt)
     })
       .then(function (response) {
 
-        let data = response.data;
+        const data = response.data;
 
         console.log(data);
       })
@@ -69,7 +71,7 @@ class Register extends React.Component<Props, State> {
       <div className="container">
         <Header />
         <div className="col-lg-12">
-        <form action="signup" onSubmit={this.signup}>
+        <form onSubmit={this.register}>
           <div>
             <div>
               <label htmlFor="Email">Email:</label>
@@ -87,7 +89,7 @@ class Register extends React.Component<Props, State> {
 
           <div>
             <Link to="/">
-              <Button onClick={this.signup}>Sign Up</Button>
+              <Button onClick={this.register}>Sign Up</Button>
             </Link>
           </div>
           <div>

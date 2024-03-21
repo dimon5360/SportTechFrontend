@@ -6,10 +6,14 @@ import Button from '../../Common/Button/Button';
 import { Link } from 'react-router-dom';
 import { unauthenticate, isAuthenticated } from '.'
 import Cookies from "js-cookie";
+import axios from "axios";
 
 interface Props {
-  
+
 }
+
+const PREFIX = "/api/v1/"
+
 type State = { username: string, firstname: string, lastname: string };
 
 class DetailProfile extends React.Component<Props, State> {
@@ -26,7 +30,7 @@ class DetailProfile extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.fetchProfile();
+        this.fetchProfile().then(r => { console.log("fetch profile result: " + r) });
     }
 
     logout() {
@@ -47,23 +51,47 @@ class DetailProfile extends React.Component<Props, State> {
 
     async fetchProfile() {
         try {
-            const response = await fetch('/api/v1/profile/get/' + Cookies.get("user_id"));
-            if (response.redirected) {
-                window.location.href = response.url;
+            const user_id =  Cookies.get("user_id")
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': Cookies.get("access-token")
             }
 
-            let data = await response.json();
+            axios.get(PREFIX + 'profile/' + user_id, {
+                headers: headers,
+            })
+            .then((response) => {
+                console.log(response.status)
 
-            this.setState({ username: data['username'] });
-            this.setState({ firstname: data['firstname'] });
-            this.setState({ lastname: data['lastname'] });
+                if (response.request.redirected) {
+                    console.log("redirected")
+                }
 
-            return data;
+                const data = response.data;
 
+                this.setState({ username: data['username'] });
+                this.setState({ firstname: data['firstname'] });
+                this.setState({ lastname: data['lastname'] });
+
+            })
+            .catch(function (error) {
+                console.log("fetch profile info status code: " + error.response.status)
+                if (error.response) {
+                    if (error.response.status === 302) {
+                        console.log("redirect")
+                    }
+                }
+                console.log(error);
+                // window.location.href = "/login"
+            })
+            .finally(function () {
+                // always executed
+            });
         } catch (error) {
             console.error('Error refresh profile:', error);
+            // window.location.href = "/login"
         }
-    };
+    }
 
     renderProfile() {
         return (

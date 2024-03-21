@@ -14,8 +14,8 @@ export default defineConfig({
         },
     },
     https: {
-      key: '/home/dmitry/Projects/SportTechService/SportTechCredentials/private.key',
-      cert: '/home/dmitry/Projects/SportTechService/SportTechCredentials/server.crt',
+      key: '../SportTechCredentials/private.key',
+      cert: '../SportTechCredentials/server.crt',
     }
 },
 })

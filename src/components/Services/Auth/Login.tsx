@@ -3,7 +3,7 @@ import React from "react";
 import Header from '../../Common/Header/Header';
 import Button from '../../Common/Button/Button';
 
-import { creadentialValidating } from "./Validating";
+import { credentialValidating } from "./Validating";
 import Cookies from 'js-cookie';
 import bcrypt from "bcryptjs-react";
 
@@ -13,6 +13,8 @@ import axios from "axios";
 interface Props {
   
 }
+
+const PREFIX = "/api/v1/"
 
 type State = { email: string, password: string };
 
@@ -31,43 +33,46 @@ class Login extends React.Component<Props, State> {
   }
 
   handlePassword(event: React.FormEvent<HTMLInputElement>) {
-
     this.setState({ password: event.currentTarget.value  });
   }
 
   async login() {
 
-    const pass = this.state.password;
-    const email = this.state.email;
+    try {
 
-    if (!creadentialValidating(email, pass)) {
-      alert("Invalid email or password")
-      return
-    }
+      const pass = this.state.password;
+      const email = this.state.email;
 
-    let salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
+      if (!credentialValidating(email, pass)) {
+        alert("Invalid email or password")
+        return
+      }
 
-    axios.post('api/v1/user/login', {
-      email: this.state.email,
-      password: bcrypt.hashSync(this.state.password, salt)
-    })
+      const salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
+
+      axios.post(PREFIX + 'login', {
+        email: this.state.email,
+        password: bcrypt.hashSync(this.state.password, salt)
+      })
       .then(function (response) {
 
-        let data = response.data;
+        console.log(response.headers)
 
-        Cookies.set('access_token', data['access_token'])
-        Cookies.set('refresh_token', data['refresh_token'])
-        Cookies.set('user_id', data['user_id'])
-
-        window.location.href = '/profile/get/' + Cookies.get("user_id")
+        if (response.status === 200) {
+          Cookies.set("refresh-token", response.headers["authorization"]) // TODO: replace to redux
+          window.location.href = '/profile/' + Cookies.get("user_id")
+        }
       })
       .catch(function (error) {
-
-        console.log(error);
+        console.log("login status code: " + error.response.status)
+        // window.location.href = '/login'
       })
       .finally(function () {
         // always executed
       });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   render() {
