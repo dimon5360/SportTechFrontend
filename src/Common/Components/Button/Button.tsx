@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Button = styled.button`
+export const Button = styled.button`
   background-color: grey;
   color: white;
   font-size: 12px;
@@ -9,5 +9,3 @@ const Button = styled.button`
   margin: 10px 0px;
   cursor: pointer;
 `;
-
-export default Button;

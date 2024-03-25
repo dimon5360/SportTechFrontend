@@ -1,7 +1,7 @@
 
 import React from "react";
-import Header from '../../Common/Header/Header';
-import Button from '../../Common/Button/Button';
+import { Header } from '../../Common/Components/Header/Header';
+import { Button } from '../../Common/Components/Button/Button';
 
 import { credentialValidating } from "./Validating";
 import { Link } from 'react-router-dom';
@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs-react";
 import axios from "axios";
 
 interface Props {
-  
+
 }
 
 const PREFIX = "/api/v1/"
@@ -19,7 +19,7 @@ type State = { email: string, password: string };
 class Register extends React.Component<Props, State> {
   constructor(props: Props, state: State) {
     super(props);
-    
+
     this.state = state;
 
     this.register = this.register.bind(this);

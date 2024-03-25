@@ -1,10 +1,10 @@
 
-import Header from '../Header/Header';
-import Button from '../Button/Button';
+import { Header } from '../Header/Header';
+import { Button } from '../Button/Button';
 
 import { Link } from 'react-router-dom';
 
-function About() {
+export function About() {
   return (
       <div className="container">
       <Header />
@@ -18,5 +18,3 @@ function About() {
     </div>
   );
 }
-
-export default About;

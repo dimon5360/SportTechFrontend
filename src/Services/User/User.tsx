@@ -1,9 +1,9 @@
 import React from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import Header from "../../Common/Header/Header.tsx";
+import { Header } from '../../Common/Components/Header/Header';
+import { Button } from '../../Common/Components/Button/Button';
 import {Link} from "react-router-dom";
-import Button from "../../Common/Button/Button.tsx";
 
 const PREFIX = "/api/v1/"
 
