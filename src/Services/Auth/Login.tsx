@@ -4,19 +4,20 @@ import { Header } from '../../Common/Components/Header/Header';
 import { Button } from '../../Common/Components/Button/Button';
 
 import { credentialValidating } from "./Validating";
-import Cookies from 'js-cookie';
-import bcrypt from "bcryptjs-react";
 
 import { Link } from 'react-router-dom';
 import { api } from '../../Common/api/api';
 import { Footer } from "../../Common/Components/Footer/Footer";
+
+import Cookies from 'js-cookie';
+import bcrypt from "bcryptjs-react";
 
 export const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault()
     try {
 
@@ -34,9 +35,10 @@ export const Login = () => {
         .then(function (response) {
 
           console.log(response.headers)
+          console.log(response.data)
 
           if (response.status === 200) {
-            Cookies.set("refresh-token", response.headers["authorization"]) // TODO: replace to redux
+            localStorage.setItem("refresh-token", response.data["refresh-token"])
             window.location.href = '/profile/' + Cookies.get("user_id")
           }
         })
