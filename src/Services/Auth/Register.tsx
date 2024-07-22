@@ -1,106 +1,76 @@
 
-import React from "react";
+import { useState } from "react";
 import { Header } from '../../Common/Components/Header/Header';
 import { Button } from '../../Common/Components/Button/Button';
+import { Footer } from "../../Common/Components/Footer/Footer";
+import { api } from '../../Common/api/api';
 
 import { credentialValidating } from "./Validating";
+
 import { Link } from 'react-router-dom';
+
 import bcrypt from "bcryptjs-react";
-import axios from "axios";
 
-interface Props {
+export const Register = () => {
 
-}
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-const PREFIX = "/api/v1/"
+  const handleOnclick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    try {
 
-type State = { email: string, password: string };
+      if (!credentialValidating(email, password)) {
+        alert("Invalid email or password")
+        return
+      }
 
-class Register extends React.Component<Props, State> {
-  constructor(props: Props, state: State) {
-    super(props);
+      const salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
 
-    this.state = state;
-
-    this.register = this.register.bind(this);
-    this.handleEmail = this.handleEmail.bind(this);
-    this.handlePassword = this.handlePassword.bind(this);
-  }
-
-  handleEmail(event: React.FormEvent<HTMLInputElement>) {
-    this.setState({ email: event.currentTarget.value  });
-  }
-
-  handlePassword(event: React.FormEvent<HTMLInputElement>) {
-    this.setState({ password: event.currentTarget.value  });
-  }
-
-  async register() {
-
-    const pass = this.state.password;
-    const email = this.state.email;
-
-    if (!credentialValidating(email, pass)) {
-      alert("Invalid email or password")
-      return
+      api.post('auth/register', {
+        email: email,
+        password: bcrypt.hashSync(password, salt)
+      })
+        .then(function (response) {
+          console.log(response.headers)
+          console.log(response.data)
+        })
+        .catch(function (error) {
+          console.log("login status code: " + error.response.status)
+        })
+        .finally(function () {
+          // always executed
+        });
+    } catch (error) {
+      console.error(error);
     }
+  };
 
-    const salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
-
-    axios.post(PREFIX + 'register', {
-      email: this.state.email,
-      password: bcrypt.hashSync(this.state.password, salt)
-    })
-      .then(function (response) {
-
-        const data = response.data;
-
-        console.log(data);
-      })
-      .catch(function (error) {
-
-        console.log(error);
-      })
-      .finally(function () {
-        // always executed
-      });
-  }
-
-  render() {
-    return (
-      <div className="container">
-        <Header />
-        <div className="col-lg-12">
-        <form onSubmit={this.register}>
-          <div>
-            <div>
-              <label htmlFor="Email">Email:</label>
-            </div>
-            <input type="text" value={this.state.email} onChange={this.handleEmail} />
-          </div>
-
-          <div>
-            <div>
-              <label htmlFor="Password">Password:</label>
-            </div>
-            <input type="password" value={this.state.password} onChange={this.handlePassword} />
-          </div>
-          </form>
-
-          <div>
-            <Link to="/">
-              <Button onClick={this.register}>Sign Up</Button>
-            </Link>
-          </div>
-          <div>
-            <Link to="/">
-              <Button >Main</Button>
-            </Link>
-          </div>
+  return (
+    < div >
+      <Header />
+      <form>
+        <div>
+          <label htmlFor="Email">Email:</label>
         </div>
-      </div>
-    )
-  }
-}
+        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
 
-export default Register
+        <div>
+          <label htmlFor="Password">Password:</label>
+        </div>
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+
+        <div>
+          <Button onClick={handleOnclick}>Sing Up</Button>
+        </div>
+
+        <div>
+          <Link to="/">
+            <Button>Main</Button>
+          </Link>
+        </div>
+      </form>
+      <Footer />
+    </div >
+  )
+}

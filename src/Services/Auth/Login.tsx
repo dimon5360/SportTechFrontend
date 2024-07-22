@@ -2,12 +2,12 @@
 import { useState } from "react";
 import { Header } from '../../Common/Components/Header/Header';
 import { Button } from '../../Common/Components/Button/Button';
+import { Footer } from "../../Common/Components/Footer/Footer";
+import { api } from '../../Common/api/api';
 
 import { credentialValidating } from "./Validating";
 
 import { Link } from 'react-router-dom';
-import { api } from '../../Common/api/api';
-import { Footer } from "../../Common/Components/Footer/Footer";
 
 import Cookies from 'js-cookie';
 import bcrypt from "bcryptjs-react";
@@ -17,7 +17,7 @@ export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: any) => {
+  const handleOnclick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     try {
 
@@ -28,7 +28,7 @@ export const Login = () => {
 
       const salt = "$2a$10$izKz/96Rs.94DDYoqO9Vi.";
 
-      api.post('login', {
+      api.post('auth/login', {
         email: email,
         password: bcrypt.hashSync(password, salt)
       })
@@ -44,7 +44,6 @@ export const Login = () => {
         })
         .catch(function (error) {
           console.log("login status code: " + error.response.status)
-          // window.location.href = '/login'
         })
         .finally(function () {
           // always executed
@@ -57,7 +56,7 @@ export const Login = () => {
   return (
     <div>
       <Header />
-      <form onSubmit={handleSubmit}>
+      <form>
         <div>
           <label htmlFor="Email">Email:</label>
         </div>
@@ -69,7 +68,7 @@ export const Login = () => {
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
         <div>
-          <Button onClick={handleSubmit}>Log In</Button>
+          <Button onClick={handleOnclick}>Log In</Button>
         </div>
 
         <div>
